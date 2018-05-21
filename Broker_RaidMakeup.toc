@@ -1,8 +1,10 @@
 ## Interface: 70300
 ## Title: Broker_RaidMakeup
-## Notes: Counts the tanks, healers, and dps in your raid
+## Notes: LDB display that counts the tanks, healers, and dps in your raid
 ## Author: KyrosKrane Sylvanblade
 ## Version: 1.0
+## OptionalDeps: CallbackHandler-1.0, LibDataBroker-1.1
+
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
