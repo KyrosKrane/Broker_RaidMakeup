@@ -42,9 +42,10 @@
 
 -- The icons to use when displaying in the broker display
 local TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
-local HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
-local DPSIcon = "Interface\\Icons\\Inv_sword_110.blp"
-local UnknownIcon = "Interface\\Icons\\Inv_shield_05.blp"
+--local HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
+local HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
+local DPSIcon = "Interface\\Icons\\Inv_sword_27.blp"
+local UnknownIcon = "Interface\\Icons\\Inv_misc_questionmark.blp"
 
 -- The strings used by the game to represent the roles. I don't think these are localized in the game.
 local ROLE_HEALER = "HEALER"
