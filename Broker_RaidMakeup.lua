@@ -40,9 +40,17 @@
 --# Constants
 --#########################################
 
+-- The icons to use when displaying in the broker display
 local TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
 local HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 local DPSIcon = "Interface\\Icons\\Inv_sword_110.blp"
+local UnknownIcon = "Interface\\Icons\\Inv_shield_05.blp"
+
+-- The strings used by the game to represent the roles. I don't think these are localized in the game.
+local ROLE_HEALER = "HEALER"
+local ROLE_TANK = "TANK"
+local ROLE_DPS = "DAMAGER"
+local ROLE_NONE = "NONE"
 
 
 --#########################################
@@ -80,9 +88,10 @@ BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
 --# Variables for tracking raid members
 --#########################################
 
-BRM.TankCount = 1
-BRM.HealerCount = 2
-BRM.DPSCount = 3
+BRM.TankCount = 0
+BRM.HealerCount = 0
+BRM.DPSCount = 0
+BRM.UnknownCount = 0
 
 
 --#########################################
@@ -96,28 +105,91 @@ end -- BRM:IconString(icon)
 
 
 function BRM:GetDisplayString()
-	return string.format("%s %d %s %d %s %d", BRM:IconString(TankIcon), BRM.TankCount, BRM:IconString(HealerIcon), BRM.HealerCount, BRM:IconString(DPSIcon), BRM.DPSCount)
+	local OutputString = string.format("%s %d %s %d %s %d", BRM:IconString(TankIcon), BRM.TankCount, BRM:IconString(HealerIcon), BRM.HealerCount, BRM:IconString(DPSIcon), BRM.DPSCount)
+	if BRM.UnknownCount > 0 then
+		OutputString = string.format("%s %s %d", OutputString, BRM:IconString(UnknownIcon), BRM.UnknownCount)
+	end
+	return OutputString
 end -- BRM:GetDisplayString()
 
 
-function BRM:UpdateComposition()
-	BRM:DebugPrint  ("in BRM:UpdateComposition")
+function BRM:IncrementRole(role)
+	if ROLE_HEALER == role then
+		BRM.HealerCount = BRM.HealerCount + 1
+	elseif ROLE_TANK == role then
+		BRM.TankCount = BRM.TankCount + 1
+	elseif ROLE_DPS == role then
+		BRM.DPSCount = BRM.DPSCount + 1
+	else
+		BRM.UnknownCount = BRM.UnknownCount + 1
+	end
+end
 
+
+function BRM:UpdateComposition()
+	BRM:DebugPrint ("in BRM:UpdateComposition")
+
+	-- Zero out the counts so we can start fresh
 	BRM.TankCount = 0
 	BRM.HealerCount = 0
 	BRM.DPSCount = 0
+	BRM.UnknownCount = 0
 
-	-- if in group
-		-- get count of group members
-		-- iterate and count by role
-	-- else
+	-- Figure out how many members in our group. Ungrouped returns zero.
+	local members = GetNumGroupMembers()
+	BRM:DebugPrint ("members is " .. members)
+	local Role
+
+	if members and members > 0 then
+		BRM:DebugPrint ("I am in some kind of Group.")
+
+		local CheckWord = IsInRaid() and "raid" or "party" -- this probably isn't localized in the game.
+		BRM:DebugPrint ("CheckWord is " .. CheckWord)
+
+		-- OK, this is bloody screwy.
+		-- If I'm in a party, then the addon has to check player and party1 to party4.
+		-- But if I'm in a raid, the addon has to check raid1 to raid40, with no need to check player!
+
+		local i
+		if "raid" == CheckWord then
+			-- Raid - iterate and count by role
+			for i=1,members do
+				Role = UnitGroupRolesAssigned(CheckWord .. i)
+				BRM:DebugPrint ("Group member " .. CheckWord .. i .. " has role " .. Role)
+
+				BRM:IncrementRole(Role)
+			end -- for raid members
+		else
+			-- Party - iterate and count by role
+			for i = 1, members - 1 do
+				Role = UnitGroupRolesAssigned(CheckWord .. i)
+				BRM:DebugPrint ("Group member " .. CheckWord .. i .. " has role " .. Role)
+
+				BRM:IncrementRole(Role)
+			end -- for party members
+
+			-- Now repeat all that for the player.
+			Role = UnitGroupRolesAssigned("player")
+			BRM:DebugPrint ("player has role " .. Role)
+
+			BRM:IncrementRole(Role)
+		end -- if raid/party
+	else
+		BRM:DebugPrint ("I am not in any kind of Group.")
+
+		-- When not grouped, there is no role to check. So instead, we go off the player's specialization.
+
 		-- get player role
-	-- end
+		Role = select(5, GetSpecializationInfo(GetSpecialization()))
+		-- GetSpecializationInfo returns: id, name, description, icon, background, role.
+		BRM:DebugPrint ("My role is " .. Role)
 
-	-- Placeholder for testing
-	BRM.TankCount = 2
-	BRM.HealerCount = 4
-	BRM.DPSCount = 6
+		BRM:IncrementRole(Role)
+	end
+
+	BRM:DebugPrint ("At end of role check, tanks = " .. BRM.TankCount .. ", healers = " .. BRM.HealerCount .. ", dps = " .. BRM.DPSCount .. ", other = " .. BRM.UnknownCount)
+
+
 
 	BRM.LDO.text = BRM:GetDisplayString()
 end -- BRM:UpdateComposition()
@@ -159,6 +231,18 @@ function BRM.Events:ADDON_LOADED(addon)
 		BRM:DebugPrint ("Now processing stuff for this addon")
 	end -- if Broker_RaidMakeup
 end -- BRM.Events:PLAYER_LOGIN()
+
+function BRM.Events:GROUP_ROSTER_UPDATE(...)
+	BRM:DebugPrint ("Got GROUP_ROSTER_UPDATE")
+	BRM:UpdateComposition()
+end -- BRM.Events:PLAYER_LOGIN()
+
+function BRM.Events:ACTIVE_TALENT_GROUP_CHANGED(...)
+	BRM:DebugPrint ("Got ACTIVE_TALENT_GROUP_CHANGED")
+	BRM:UpdateComposition()
+end -- BRM.Events:PLAYER_LOGIN()
+
+
 
 
 --#########################################
