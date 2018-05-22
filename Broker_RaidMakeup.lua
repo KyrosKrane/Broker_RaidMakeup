@@ -92,6 +92,8 @@ BRM.Faction, _ = UnitFactionGroup("player")
 
 -- The icons to use when displaying in the broker display
 BRM.MainIcon = "Interface\\Icons\\Inv_helm_robe_raidpriest_k_01" -- Default icon to use until we determine the faction later.
+BRM.HordeIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
+BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
 BRM.TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
 --local BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 BRM.HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
@@ -308,10 +310,10 @@ function BRM.Events:PLAYER_ENTERING_WORLD(...)
 
 	if "Horde" == BRM.Faction then
 		BRM:DebugPrint("Faction is Horde")
-		BRM.MainIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
+		BRM.LDO.icon = BRM.HordeIcon
 	elseif "Alliance" == BRM.Faction then
 		BRM:DebugPrint("Faction is Alliance")
-		BRM.MainIcon = "Interface\\Icons\\Inv_misc_head_human_02"
+		BRM.LDO.icon = BRM.AllianceIcon
 	else
 		-- What the hell?
 		BRM:DebugPrint("Unknown faction detected - " .. BRM.Faction)
