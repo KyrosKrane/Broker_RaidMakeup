@@ -76,6 +76,11 @@ function BRM:DebugPrint(...)
 	end
 end -- BRM:DebugPrint
 
+-- Print regular output to the chat frame.
+function BRM:ChatPrint(...)
+	print ("|cff" .. "0066ff" .. "BRM:|r", ...)
+end -- BRM:DebugPrint
+
 
 --#########################################
 --# Constants
@@ -109,8 +114,10 @@ SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 
 function BRM:HandleCommandLine()
 	BRM.DebugMode = not BRM.DebugMode
+	BRM:ChatPrint("Printing debug statements is now " .. BRM.DebugMode and "on." or "off.")
 end
 --@end-alpha@
+
 
 --#########################################
 --# Variables for tracking raid members
