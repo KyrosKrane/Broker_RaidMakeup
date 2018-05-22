@@ -40,5 +40,5 @@ luac.out
 *.hex
 
 # Backup files
-.bak
+*.bak
 
