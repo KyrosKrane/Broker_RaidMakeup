@@ -87,7 +87,7 @@ end -- BRM:DebugPrint
 --#########################################
 
 -- The icons to use when displaying in the broker display
-BRM.MainIcon = "Inv_helm_robe_raidpriest_k_01" -- @TODO: fill in the master icon for this addon.
+BRM.MainIcon = "Interface\\Icons\\Inv_helm_robe_raidpriest_k_01" -- Default icon to use until we determine the faction later.
 BRM.TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
 --local BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 BRM.HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
