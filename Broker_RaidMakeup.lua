@@ -86,6 +86,10 @@ end -- BRM:DebugPrint
 --# Constants
 --#########################################
 
+-- Get the main app icon based on the player's faction
+BRM.Faction, _ = UnitFactionGroup("player")
+
+
 -- The icons to use when displaying in the broker display
 BRM.MainIcon = "Interface\\Icons\\Inv_helm_robe_raidpriest_k_01" -- Default icon to use until we determine the faction later.
 BRM.TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
@@ -287,6 +291,31 @@ function BRM.Events:ACTIVE_TALENT_GROUP_CHANGED(...)
 	BRM:DebugPrint("Got ACTIVE_TALENT_GROUP_CHANGED")
 	BRM:UpdateComposition()
 end -- BRM.Events:ACTIVE_TALENT_GROUP_CHANGED()
+
+-- This is for debugging
+function BRM.Events:PLAYER_ENTERING_WORLD(...)
+	BRM:DebugPrint("Got PLAYER_ENTERING_WORLD")
+
+	-- Get the main app icon based on the player's faction
+	BRM.Faction, _ = UnitFactionGroup("player")
+
+	if not BRM.Faction then
+		BRM:DebugPrint("Faction is nil")
+		return
+	end
+
+	if "Horde" == BRM.Faction then
+		BRM:DebugPrint("Faction is Horde")
+		BRM.MainIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
+	elseif "Alliance" == BRM.Faction then
+		BRM:DebugPrint("Faction is Alliance")
+		BRM.MainIcon = "Interface\\Icons\\Inv_misc_head_human_02"
+	else
+		-- What the hell?
+		BRM:DebugPrint("Unknown faction detected - " .. BRM.Faction)
+	end
+
+end -- BRM.Events:PLAYER_ENTERING_WORLD()
 
 
 --#########################################
