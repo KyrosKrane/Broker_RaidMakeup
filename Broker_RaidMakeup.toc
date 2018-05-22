@@ -1,9 +1,11 @@
 ## Interface: 70300
 ## Title: Broker_RaidMakeup
-## Notes: LDB display that counts the tanks, healers, and dps in your raid
+## Version: @project-version@
 ## Author: KyrosKrane Sylvanblade
-## Version: 1.0
+## Notes: LDB display that counts the tanks, healers, and dps in your raid
 
+## X-Curse-Project-ID: 294431
+## X-WoWI-ID: 24656
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
