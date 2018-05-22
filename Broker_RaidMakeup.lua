@@ -129,6 +129,11 @@ BRM.DPSCount = 0
 BRM.UnknownCount = 0
 BRM.TotalCount = 0
 
+-- The game is firing the ACTIVE_TALENT_GROUP_CHANGED event before the PLAYER_LOGIN event.
+-- Since we're not fully in the world yet at that point, the group and raid query functions are returning unexpected results.
+-- So, we use this variable to track whether the add-on is loaded and active.
+-- We turn it on in the PLAYER_LOGIN event.
+BRM.IsActive = false
 
 --#########################################
 --# Create string for count display
@@ -166,6 +171,12 @@ end
 
 function BRM:UpdateComposition()
 	BRM:DebugPrint("in BRM:UpdateComposition")
+
+	-- If the addon is not yet active, then just exit
+	if not BRM.IsActive then
+		BRM:DebugPrint("Addon is not active. Exiting without updating.")
+		return
+	end
 
 	-- Zero out the counts so we can start fresh
 	BRM.TankCount = 0
@@ -253,6 +264,7 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 function BRM.Events:PLAYER_LOGIN(...)
 	-- Announce our load.
 	BRM:DebugPrint("Got PLAYER_LOGIN event")
+	BRM.IsActive = true
 	BRM:UpdateComposition()
 end -- BRM.Events:PLAYER_LOGIN()
 
