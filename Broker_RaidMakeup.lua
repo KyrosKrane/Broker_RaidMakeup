@@ -67,7 +67,7 @@ local print = print
 local BRM = { }
 
 -- Debug settings
-BRM.DebugMode = true
+BRM.DebugMode = false
 
 -- Print debug output to the chat frame.
 function BRM:DebugPrint(...)
@@ -83,6 +83,18 @@ end -- BRM:DebugPrint
 
 -- Create the frame to hold our event catcher, and the list of events.
 BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
+
+
+--#########################################
+--# Slash command handling
+--#########################################
+
+SLASH_BRM1 = "/brm"
+SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
+
+function BRM:HandleCommandLine()
+	BRM.DebugMode = not BRM.DebugMode
+end
 
 
 --#########################################
