@@ -42,3 +42,5 @@ luac.out
 # Backup files
 *.bak
 
+# Local extra files
+Extras/
