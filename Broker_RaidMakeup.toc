@@ -3,7 +3,7 @@
 ## Notes: LDB display that counts the tanks, healers, and dps in your raid
 ## Author: KyrosKrane Sylvanblade
 ## Version: 1.0
-## OptionalDeps: CallbackHandler-1.0, LibDataBroker-1.1
+## OptionalDeps: LibStub, CallbackHandler-1.0, LibDataBroker-1.1
 
 
 libs\LibStub\LibStub.lua
