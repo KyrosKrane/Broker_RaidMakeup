@@ -152,7 +152,7 @@ end -- BRM:IconString(icon)
 
 
 function BRM:GetDisplayString()
-	local OutputString = string.format("%s %d %s %d %s %d", BRM:IconString(BRM.TankIcon), BRM.TankCount, BRM:IconString(BRM.HealerIcon), BRM.HealerCount, BRM:IconString(BRM.DPSIcon), BRM.DPSCount)
+	local OutputString = string.format("%d %s %d %s %d %s %d", BRM.TotalCount, BRM:IconString(BRM.TankIcon), BRM.TankCount, BRM:IconString(BRM.HealerIcon), BRM.HealerCount, BRM:IconString(BRM.DPSIcon), BRM.DPSCount)
 	if BRM.UnknownCount > 0 then
 		OutputString = string.format("%s %s %d", OutputString, BRM:IconString(BRM.UnknownIcon), BRM.UnknownCount)
 	end
