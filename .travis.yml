@@ -11,4 +11,4 @@ after_script: bash release.sh -g 7.3.5
 
 branches:
   only:
-  - /^[vV]0?\d+\.\d+(\.\d+)?(-\S*)?$/
+  - /^[vV]?\d+\.\d+(\.\d+)?(-\S*)?$/
