@@ -274,19 +274,19 @@ function BRM.Events:ADDON_LOADED(addon)
 	if addon == "Broker_RaidMakeup" then
 		BRM:DebugPrint("Now processing stuff for this addon")
 	end -- if Broker_RaidMakeup
-end -- BRM.Events:PLAYER_LOGIN()
+end -- BRM.Events:ADDON_LOADED()
 
 -- This triggers when someone joins or leaves a group, or changes their spec or role in the group.
 function BRM.Events:GROUP_ROSTER_UPDATE(...)
 	BRM:DebugPrint("Got GROUP_ROSTER_UPDATE")
 	BRM:UpdateComposition()
-end -- BRM.Events:PLAYER_LOGIN()
+end -- BRM.Events:GROUP_ROSTER_UPDATE()
 
 -- This triggers when the player changes their talent spec.
 function BRM.Events:ACTIVE_TALENT_GROUP_CHANGED(...)
 	BRM:DebugPrint("Got ACTIVE_TALENT_GROUP_CHANGED")
 	BRM:UpdateComposition()
-end -- BRM.Events:PLAYER_LOGIN()
+end -- BRM.Events:ACTIVE_TALENT_GROUP_CHANGED()
 
 
 --#########################################
