@@ -41,6 +41,7 @@
 --#########################################
 
 -- The icons to use when displaying in the broker display
+local BRMIcon = "Inv_helm_robe_raidpriest_k_01" -- @TODO: fill in the master icon for this addon.
 local TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
 --local HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 local HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
@@ -69,6 +70,11 @@ local BRM = { }
 -- Debug settings
 BRM.DebugMode = false
 
+--@alpha@
+BRM.DebugMode = true
+--@end-alpha@
+
+
 -- Print debug output to the chat frame.
 function BRM:DebugPrint(...)
 	if (BRM.DebugMode) then
@@ -89,13 +95,14 @@ BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
 --# Slash command handling
 --#########################################
 
+--@alpha@
 SLASH_BRM1 = "/brm"
 SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 
 function BRM:HandleCommandLine()
 	BRM.DebugMode = not BRM.DebugMode
 end
-
+--@end-alpha@
 
 --#########################################
 --# Variables for tracking raid members
@@ -218,7 +225,7 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 	--text = string.format("%s \124T" .. HealerIcon .. ":%d:%d\124t", "my text here", size, size),
 	text = BRM:GetDisplayString(),
 	value = "0",
-	icon = TankIcon,
+	icon = BRMIcon,
 	label = "Broker_RaidMakeup",
 	OnTooltipShow = function()end,
 }) -- BRM.LDO creation
