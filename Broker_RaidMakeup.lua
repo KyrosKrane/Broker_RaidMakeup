@@ -263,13 +263,10 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 --# Events to register and handle
 --#########################################
 
--- On-load handler for addon initialization.
+-- This event is only for debugging.
 -- Note that PLAYER_LOGIN is triggered after all ADDON_LOADED events
 function BRM.Events:PLAYER_LOGIN(...)
-	-- Announce our load.
 	BRM:DebugPrint("Got PLAYER_LOGIN event")
-	BRM.IsActive = true
-	BRM:UpdateComposition()
 end -- BRM.Events:PLAYER_LOGIN()
 
 -- This event is only for debugging.
@@ -292,9 +289,14 @@ function BRM.Events:ACTIVE_TALENT_GROUP_CHANGED(...)
 	BRM:UpdateComposition()
 end -- BRM.Events:ACTIVE_TALENT_GROUP_CHANGED()
 
--- This is for debugging
+-- On-load handler for addon initialization.
 function BRM.Events:PLAYER_ENTERING_WORLD(...)
+	-- Announce our load.
 	BRM:DebugPrint("Got PLAYER_ENTERING_WORLD")
+
+	-- It's now safe to turn on the addon and get counts.
+	BRM.IsActive = true
+	BRM:UpdateComposition()
 
 	-- Get the main app icon based on the player's faction
 	BRM.Faction, _ = UnitFactionGroup("player")
