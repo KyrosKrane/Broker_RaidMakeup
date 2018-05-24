@@ -76,6 +76,7 @@ function BRM:DebugPrint(...)
 	end
 end -- BRM:DebugPrint
 
+
 -- Print regular output to the chat frame.
 function BRM:ChatPrint(...)
 	print ("|cff" .. "0066ff" .. "BRM:|r", ...)
@@ -89,13 +90,12 @@ end -- BRM:DebugPrint
 -- Get the main app icon based on the player's faction
 BRM.Faction, _ = UnitFactionGroup("player")
 
-
 -- The icons to use when displaying in the broker display
 BRM.MainIcon = "Interface\\Icons\\Inv_helm_robe_raidpriest_k_01" -- Default icon to use until we determine the faction later.
 BRM.HordeIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
 BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
 BRM.TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
---local BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
+--BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 BRM.HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
 BRM.DPSIcon = "Interface\\Icons\\Inv_sword_27.blp"
 BRM.UnknownIcon = "Interface\\Icons\\Inv_misc_questionmark.blp"
@@ -112,7 +112,7 @@ BRM.Version = "@project-version@"
 
 --@alpha@
 --#########################################
---# Slash command handling
+--# Slash command handling - only for testing
 --#########################################
 
 SLASH_BRM1 = "/brm"
@@ -282,6 +282,41 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 	label = "Broker_RaidMakeup",
 	OnTooltipShow = function()end,
 }) -- BRM.LDO creation
+
+
+-- Handler for if user clicks on the display
+function BRM.LDO:OnClick(...)
+	BRM:DebugPrint("Got click on LDB object")
+
+	-- I'm trying to capture which situations don't result in an automatic update.
+	-- That essentially indicates either an event I missed coding for, or some kind of bug that resulted in invalid role counts.
+	local old_TankCount = BRM.TankCount
+	local old_HealerCount = BRM.HealerCount
+	local old_DPSCount = BRM.DPSCount
+	local old_UnknownCount = BRM.UnknownCount
+	local old_TotalCount = BRM.TotalCount
+
+	-- Refresh the counts
+	BRM:UpdateComposition()
+
+	-- Check if the counts changed, indicating the error above.
+	if old_TankCount ~= BRM.TankCount
+		or old_HealerCount ~= BRM.HealerCount
+		or old_DPSCount ~= BRM.DPSCount
+		or old_UnknownCount ~= BRM.UnknownCount
+		or old_TotalCount ~= BRM.TotalCount
+		then
+			BRM:DebugPrint("Counts are different after click.")
+			BRM:DebugPrint("old_TankCount is "		.. (old_TankCount		or "nil") .. ", new TankCount is "		.. (BRM.TankCount		or "nil"))
+			BRM:DebugPrint("old_HealerCount is "	.. (old_HealerCount		or "nil") .. ", new DPSCount is "		.. (BRM.DPSCount		or "nil"))
+			BRM:DebugPrint("old_DPSCount is "		.. (old_DPSCount		or "nil") .. ", new DPSCount is "		.. (BRM.DPSCount		or "nil"))
+			BRM:DebugPrint("old_UnknownCount is "	.. (old_UnknownCount	or "nil") .. ", new UnknownCount is "	.. (BRM.UnknownCount	or "nil"))
+			BRM:DebugPrint("old_TotalCount is "		.. (old_TotalCount		or "nil") .. ", new TotalCount is "		.. (BRM.TotalCount		or "nil"))
+
+			-- @TODO: Capture some info and give the player a way to report it.
+	end
+
+end -- BRM.LDO:OnClick()
 
 
 --#########################################
