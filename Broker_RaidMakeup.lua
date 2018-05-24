@@ -161,6 +161,9 @@ end -- BRM:GetDisplayString()
 
 
 function BRM:IncrementRole(role)
+	-- Handle case of nil roles - can happen when the game has not fully loaded and we try to do a role check
+	if not role then role = "unknown" end
+
 	if BRM.ROLE_HEALER == role then
 		BRM.HealerCount = BRM.HealerCount + 1
 	elseif BRM.ROLE_TANK == role then
@@ -212,21 +215,36 @@ function BRM:UpdateComposition()
 			-- Raid - iterate and count by role
 			for i=1,members do
 				Role = UnitGroupRolesAssigned(CheckWord .. i)
-				BRM:DebugPrint("Group member " .. CheckWord .. i .. " has role " .. Role)
-				BRM:IncrementRole(Role)
+				if Role then
+					BRM:DebugPrint("Group member " .. CheckWord .. i .. " has role " .. Role)
+					BRM:IncrementRole(Role)
+				else
+					BRM:DebugPrint("Group member " .. CheckWord .. i .. " has no role")
+					BRM:IncrementRole("unknown")
+				end
 			end -- for raid members
 		else
 			-- Party - iterate and count by role
 			for i = 1, members - 1 do
 				Role = UnitGroupRolesAssigned(CheckWord .. i)
-				BRM:DebugPrint("Group member " .. CheckWord .. i .. " has role " .. Role)
-				BRM:IncrementRole(Role)
+				if Role then
+					BRM:DebugPrint("Group member " .. CheckWord .. i .. " has role " .. Role)
+					BRM:IncrementRole(Role)
+				else
+					BRM:DebugPrint("Group member " .. CheckWord .. i .. " has no role")
+					BRM:IncrementRole("unknown")
+				end
 			end -- for party members
 
 			-- Now repeat all that for the player.
 			Role = UnitGroupRolesAssigned("player")
-			BRM:DebugPrint("player has role " .. Role)
-			BRM:IncrementRole(Role)
+			if Role then
+				BRM:DebugPrint("player has role " .. Role)
+				BRM:IncrementRole(Role)
+			else
+				BRM:DebugPrint("player has no role")
+				BRM:IncrementRole("unknown")
+			end
 		end -- if raid/party
 	else
 		BRM:DebugPrint("I am not in any kind of Group.")
@@ -236,9 +254,14 @@ function BRM:UpdateComposition()
 		-- get player role
 		Role = select(5, GetSpecializationInfo(GetSpecialization()))
 		-- GetSpecializationInfo returns: id, name, description, icon, background, role.
-		BRM:DebugPrint("My role is " .. Role)
 
-		BRM:IncrementRole(Role)
+		if Role then
+			BRM:DebugPrint("My role is " .. Role)
+			BRM:IncrementRole(Role)
+		else
+			BRM:DebugPrint("Did not get role from specialization check")
+			BRM:IncrementRole("unknown")
+		end
 	end
 
 	BRM:DebugPrint("At end of role check, tanks = " .. BRM.TankCount .. ", healers = " .. BRM.HealerCount .. ", dps = " .. BRM.DPSCount .. ", other = " .. BRM.UnknownCount)
