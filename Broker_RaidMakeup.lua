@@ -314,6 +314,9 @@ function BRM.LDO:OnClick(...)
 			BRM:DebugPrint("old_TotalCount is "		.. (old_TotalCount		or "nil") .. ", new TotalCount is "		.. (BRM.TotalCount		or "nil"))
 
 			-- @TODO: Capture some info and give the player a way to report it.
+
+			-- Also schedule an update in five seconds to ensure we capture any additional changes
+			C_Timer.After(5, function() BRM:UpdateComposition() end)
 	end
 
 end -- BRM.LDO:OnClick()
