@@ -92,13 +92,17 @@ BRM.Faction, _ = UnitFactionGroup("player")
 
 -- The icons to use when displaying in the broker display
 BRM.MainIcon = "Interface\\Icons\\Inv_helm_robe_raidpriest_k_01" -- Default icon to use until we determine the faction later.
-BRM.HordeIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
-BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
+BRM.AllianceIcon = "Interface\\Icons\\Inv_tabard_a_78wrynnvanguard"
+BRM.HordeIcon = "Interface\\Icons\\Inv_tabard_a_77voljinsspear"
 BRM.TankIcon = "Interface\\Icons\\Inv_shield_06.blp"
---BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 BRM.HealerIcon = "Interface\\Icons\\spell_chargepositive.blp"
 BRM.DPSIcon = "Interface\\Icons\\Inv_sword_27.blp"
 BRM.UnknownIcon = "Interface\\Icons\\Inv_misc_questionmark.blp"
+
+-- Icons I considered but didn't like
+--BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
+--BRM.HordeIcon = "Interface\\Icons\\Achievement_femalegoblinhead"
+--BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 
 -- The strings used by the game to represent the roles. I don't think these are localized in the game.
 BRM.ROLE_HEALER = "HEALER"
