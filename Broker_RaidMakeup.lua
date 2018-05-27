@@ -44,6 +44,10 @@
 local _G = _G
 local string = string
 local print = print
+local setmetatable = setmetatable
+local select = select
+local type = type
+local pairs = pairs
 
 -- Define a global for our namespace
 local BRM = { }
