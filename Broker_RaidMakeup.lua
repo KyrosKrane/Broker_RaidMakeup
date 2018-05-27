@@ -197,10 +197,10 @@ BRM.AllianceIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP02")
 BRM.HordeIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP01")
 
 -- Role icons
-BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 39, 0, 20)
 BRM.TankIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 0, 19, 22, 41)
+BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 39, 0, 20)
 BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 38, 22, 41)
-BRM.UnknownIcon = IconClass("Interface\\Icons\\Inv_misc_questionmark.blp")
+BRM.UnknownIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 135, 135+64, 68, 68+64)
 
 -- Icons I considered but didn't like
 --BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
@@ -211,6 +211,12 @@ BRM.UnknownIcon = IconClass("Interface\\Icons\\Inv_misc_questionmark.blp")
 --BRM.TankIcon = IconClass("Interface\\Icons\\Inv_shield_06.blp")
 --BRM.HealerIcon = IconClass("Interface\\Icons\\spell_chargepositive.blp")
 --BRM.DPSIcon = IconClass("Interface\\Icons\\Inv_sword_27.blp")
+--BRM.UnknownIcon = IconClass("Interface\\Icons\\Inv_misc_questionmark.blp")
+
+-- These high res icons don't look very good when squished down to a broker display. The low-res ones above are better.
+--BRM.TankIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 0, 0+64, 68, 68+64)
+--BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 68, 68+64, 0, 0+64)
+--BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 68, 68+64, 68, 68+64)
 
 
 --#########################################
