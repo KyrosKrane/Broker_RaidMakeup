@@ -197,10 +197,10 @@ BRM.AllianceIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP02")
 BRM.HordeIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP01")
 
 -- Role icons
-BRM.TankIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 0, 19, 22, 41)
-BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 39, 0, 20)
-BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 38, 22, 41)
-BRM.UnknownIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 135, 135+64, 68, 68+64)
+BRM.TankIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 0, 0+19, 22, 22+19)
+BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 19+19, 1, 1+19)
+BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 19+19, 22, 22+19)
+BRM.UnknownIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp", 256, 256, 135, 135+64, 67, 67+64)
 
 -- Icons I considered but didn't like
 --BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
