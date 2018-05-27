@@ -391,7 +391,11 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 	value = "0",
 	icon = BRM.MainIcon:GetIconString(),
 	label = "Broker_RaidMakeup",
-	OnTooltipShow = function()end,
+	OnTooltipShow = function(tooltip)
+		if not tooltip or not tooltip.AddLine then return end
+		tooltip:AddLine("Broker_RaidMakeup")
+		tooltip:AddLine("Click to refresh")
+	end,
 }) -- BRM.LDO creation
 
 
