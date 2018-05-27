@@ -188,18 +188,15 @@ end -- IconClass:GetIconString()
 --#########################################
 
 -- The icons to use when displaying in the broker display
-BRM.MainIcon = IconClass("Interface\\Icons\\Inv_helm_robe_raidpriest_k_01") -- Default icon to use until we determine the faction later.
+BRM.MainIcon = IconClass("Interface\\Icons\\Inv_helm_robe_raidpriest_k_01") -- Placeholder icon to use until we determine the faction later.
 BRM.AllianceIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP02")
 BRM.HordeIcon = IconClass("Interface\\Calendar\\UI-Calendar-Event-PVP01")
-BRM.TankIcon = IconClass("Interface\\Icons\\Inv_shield_06.blp")
-BRM.HealerIcon = IconClass("Interface\\Icons\\spell_chargepositive.blp")
-BRM.DPSIcon = IconClass("Interface\\Icons\\Inv_sword_27.blp")
-BRM.UnknownIcon = IconClass("Interface\\Icons\\Inv_misc_questionmark.blp")
 
--- New role icons
+-- Role icons
 BRM.HealerIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 39, 0, 20)
 BRM.TankIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 0, 19, 22, 41)
 BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64, 64, 19, 38, 22, 41)
+BRM.UnknownIcon = IconClass("Interface\\Icons\\Inv_misc_questionmark.blp")
 
 -- Icons I considered but didn't like
 --BRM.AllianceIcon = "Interface\\Icons\\Inv_misc_head_human_02"
@@ -207,6 +204,9 @@ BRM.DPSIcon = IconClass("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp", 64
 --BRM.HealerIcon = "Interface\\Icons\\Spell_holy_flashheal.blp"
 --BRM.AllianceIcon = IconClass("Interface\\Icons\\Inv_tabard_a_78wrynnvanguard")
 --BRM.HordeIcon = IconClass("Interface\\Icons\\Inv_tabard_a_77voljinsspear")
+--BRM.TankIcon = IconClass("Interface\\Icons\\Inv_shield_06.blp")
+--BRM.HealerIcon = IconClass("Interface\\Icons\\spell_chargepositive.blp")
+--BRM.DPSIcon = IconClass("Interface\\Icons\\Inv_sword_27.blp")
 
 
 --#########################################
@@ -237,7 +237,7 @@ SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 
 function BRM:HandleCommandLine()
 	BRM.DebugMode = not BRM.DebugMode
-	BRM:ChatPrint("Printing debug statements is now " .. BRM.DebugMode and "on." or "off.")
+	BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on." or "off."))
 end
 --@end-alpha@
 
