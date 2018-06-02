@@ -7,8 +7,14 @@
 ## X-Curse-Project-ID: 294431
 ## X-WoWI-ID: 24656
 
-libs\LibStub\LibStub.lua
-libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
-libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+## SavedVariablesPerCharacter: BRM_DB
+
+
+#@no-lib-strip@
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+#@end-no-lib-strip@
 
 Broker_RaidMakeup.lua

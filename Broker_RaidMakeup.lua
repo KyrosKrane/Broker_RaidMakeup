@@ -75,9 +75,9 @@ BRM.DebugMode = true
 
 -- Print debug output to the chat frame.
 function BRM:DebugPrint(...)
-	if (BRM.DebugMode) then
+	if not BRM.DebugMode then return end
+
 		print ("|cff" .. "a00000" .. "BRM Debug:|r", ...)
-	end
 end -- BRM:DebugPrint
 
 
@@ -85,6 +85,50 @@ end -- BRM:DebugPrint
 function BRM:ChatPrint(...)
 	print ("|cff" .. "0066ff" .. "BRM:|r", ...)
 end -- BRM:DebugPrint
+
+
+-- Debugging code to see what the hell is being passed in...
+function BRM:PrintVarArgs(...)
+	if not BRM.DebugMode then return end
+
+	local n = select('#', ...)
+	BRM:DebugPrint ("There are ", n, " items in varargs.")
+	local msg
+	for i = 1, n do
+		msg = select(i, ...)
+		BRM:DebugPrint ("Item ", i, " is ", msg)
+	end
+end -- BRM:PrintVarArgs()
+
+
+-- Dumps a table into chat. Not intended for production use.
+function BRM:DumpTable(tab, indent)
+	if not BRM.DebugMode then return end
+
+	if not indent then indent = 0 end
+	if indent > 10 then
+		BRM:DebugPrint("Recursion is at 11 already; aborting.")
+		return
+	end
+	for k, v in pairs(tab) do
+		local s = ""
+		if indent > 0 then
+			for i = 0, indent do
+				s = s .. "    "
+			end
+		end
+		if "table" == type(v) then
+			s = s .. "Item " .. k .. " is sub-table."
+			BRM:DebugPrint(s)
+			indent = indent + 1
+			BRM:DumpTable(v, indent)
+			indent = indent - 1
+		else
+			s = s .. "Item " .. k .. " is " .. tostring(v)
+			BRM:DebugPrint(s)
+		end
+	end
+end -- BRM:DumpTable()
 
 
 --#########################################
@@ -247,7 +291,7 @@ SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 
 function BRM:HandleCommandLine()
 	BRM.DebugMode = not BRM.DebugMode
-	BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on." or "off."))
+	BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on" or "off") .. ".")
 end
 --@end-alpha@
 
@@ -262,10 +306,10 @@ BRM.DPSCount = 0
 BRM.UnknownCount = 0
 BRM.TotalCount = 0
 
--- The game is firing the ACTIVE_TALENT_GROUP_CHANGED event before the PLAYER_LOGIN event.
+-- The game is firing the ACTIVE_TALENT_GROUP_CHANGED event before the PLAYER_ENTERING_WORLD event.
 -- Since we're not fully in the world yet at that point, the group and raid query functions are returning unexpected results.
 -- So, we use this variable to track whether the add-on is loaded and active.
--- We turn it on in the PLAYER_LOGIN event.
+-- We turn it on in the PLAYER_ENTERING_WORLD event.
 BRM.IsActive = false
 
 --#########################################
@@ -410,8 +454,16 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
 
 
 -- Handler for if user clicks on the display
-function BRM.LDO:OnClick(...)
+function BRM.LDO:OnClick(button)
 	BRM:DebugPrint("Got click on LDB object")
+
+	if button == "LeftButton" then
+		BRM:DebugPrint("Got left button")
+	elseif button == "RightButton" then
+		BRM:DebugPrint("Got right button")
+	else
+		BRM:DebugPrint("Got some other button")
+	end
 
 	-- I'm trying to capture which situations don't result in an automatic update.
 	-- That essentially indicates either an event I missed coding for, or some kind of bug that resulted in invalid role counts.
@@ -447,6 +499,7 @@ function BRM.LDO:OnClick(...)
 end -- BRM.LDO:OnClick()
 
 
+
 --#########################################
 --# Events to register and handle
 --#########################################
@@ -457,13 +510,49 @@ function BRM.Events:PLAYER_LOGIN(...)
 	BRM:DebugPrint("Got PLAYER_LOGIN event")
 end -- BRM.Events:PLAYER_LOGIN()
 
--- This event is only for debugging.
+
+-- This event is for loading our saved settings.
 function BRM.Events:ADDON_LOADED(addon)
 	BRM:DebugPrint("Got ADDON_LOADED for " .. addon)
-	if addon == "Broker_RaidMakeup" then
-		BRM:DebugPrint("Now processing stuff for this addon")
-	end -- if Broker_RaidMakeup
+	if addon ~= "Broker_RaidMakeup" then return end
+
+
+	--#########################################
+	--# Load saved settings
+	--#########################################
+
+	BRM:DebugPrint("Loading or creating DB")
+	if BRM_DB then
+		-- Load the settings saved by the game.
+		BRM:DebugPrint ("Restoring existing BRM DB")
+		BRM.DB = BRM_DB
+
+		-- This situation should only occur during development, but just in case, let's handle it.
+		if not BRM.DB.MinimapSettings then BRM.DB.MinimapSettings = {} end
+	else
+		-- Initialize settings on first use
+		BRM:DebugPrint ("Creating new BRM DB")
+		BRM.DB = {}
+		BRM.DB.Version = 1
+		BRM.DB.MinimapSettings = {}
+	end
+
+	BRM:DebugPrint ("DB contents follow")
+	BRM:DumpTable(BRM.DB)
+	BRM:DebugPrint ("End DB contents")
+
+	--#########################################
+	--# Minimap button for LDB object
+	--#########################################
+
+	-- Creating the minimap icon requires somewhere to save the data.
+	-- We don't load that until this event.
+	-- So, this is the earliest point we can create the minimap icon.
+
+	BRM.MinimapIcon = LibStub("LibDBIcon-1.0")
+	BRM.MinimapIcon:Register("Broker_RaidMakeup", BRM.LDO, BRM.DB.MinimapSettings)
 end -- BRM.Events:ADDON_LOADED()
+
 
 -- This triggers when someone joins or leaves a group, or changes their spec or role in the group.
 function BRM.Events:GROUP_ROSTER_UPDATE(...)
@@ -471,11 +560,13 @@ function BRM.Events:GROUP_ROSTER_UPDATE(...)
 	BRM:UpdateComposition()
 end -- BRM.Events:GROUP_ROSTER_UPDATE()
 
+
 -- This triggers when the player changes their talent spec.
 function BRM.Events:ACTIVE_TALENT_GROUP_CHANGED(...)
 	BRM:DebugPrint("Got ACTIVE_TALENT_GROUP_CHANGED")
 	BRM:UpdateComposition()
 end -- BRM.Events:ACTIVE_TALENT_GROUP_CHANGED()
+
 
 -- On-load handler for addon initialization.
 function BRM.Events:PLAYER_ENTERING_WORLD(...)
@@ -496,11 +587,11 @@ function BRM.Events:PLAYER_ENTERING_WORLD(...)
 
 	if BRM.FACTION_HORDE == BRM.Faction then
 		BRM:DebugPrint("Faction is Horde")
-		BRM:DebugPrint(BRM.HordeIcon:GetIconStringInner())
+		BRM:DebugPrint("Inner string is " .. BRM.HordeIcon:GetIconStringInner())
 		BRM.LDO.icon = BRM.HordeIcon.IconFile
 	elseif BRM.FACTION_ALLIANCE == BRM.Faction then
 		BRM:DebugPrint("Faction is Alliance")
-		BRM:DebugPrint(BRM.AllianceIcon:GetIconStringInner())
+		BRM:DebugPrint("Inner string is " .. BRM.AllianceIcon:GetIconStringInner())
 		BRM.LDO.icon = BRM.AllianceIcon.IconFile
 	else
 		-- What the hell?
@@ -508,6 +599,13 @@ function BRM.Events:PLAYER_ENTERING_WORLD(...)
 	end
 
 end -- BRM.Events:PLAYER_ENTERING_WORLD()
+
+
+-- Save the db on logout.
+function BRM.Events:PLAYER_LOGOUT(...)
+	BRM:DebugPrint ("In PLAYER_LOGOUT, saving DB.")
+	BRM_DB = BRM.DB
+end -- BRM.Events:PLAYER_LOGOUT()
 
 
 --#########################################
