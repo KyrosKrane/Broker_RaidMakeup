@@ -27,7 +27,7 @@ local type = type
 local pairs = pairs
 
 -- Define a global for our namespace
-local BRM = { }
+local BRM = {}
 
 
 --#########################################
@@ -55,7 +55,7 @@ BRM.DebugMode = true
 function BRM:DebugPrint(...)
 	if not BRM.DebugMode then return end
 
-		print ("|cff" .. "a00000" .. "BRM Debug:|r", ...)
+	print ("|cff" .. "a00000" .. "BRM Debug:|r", ...)
 end -- BRM:DebugPrint
 
 
@@ -274,9 +274,9 @@ SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 function BRM:HandleCommandLine(arg1, arg2)
 	BRM:DebugPrint("Slash arg1 is " .. arg1)
 	if "debug" == string.lower(arg1) then
-	BRM.DebugMode = not BRM.DebugMode
+		BRM.DebugMode = not BRM.DebugMode
 		BRM.DB.DebugMode = BRM.DebugMode
-	BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on" or "off") .. ".")
+		BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on" or "off") .. ".")
 	elseif "mm" == string.lower(arg1) then
 		BRM:DebugPrint("Initial BRM.DB.MinimapSettings.hide state is " .. (BRM.DB.MinimapSettings.hide and "true" or "false"))
 
@@ -313,8 +313,9 @@ BRM.TotalCount = 0
 -- We turn it on in the PLAYER_ENTERING_WORLD event.
 BRM.IsActive = false
 
+
 --#########################################
---# Create string for count display
+--# Count display and utility functions
 --#########################################
 
 function BRM:GetDisplayString()
@@ -510,7 +511,6 @@ function BRM.LDO:OnClick(button)
 end -- BRM.LDO:OnClick()
 
 
-
 --#########################################
 --# Minimap icon handling
 --#########################################
@@ -521,43 +521,29 @@ function BRM:CreateMinimapButton()
 		BRM.MinimapIcon = LibStub("LibDBIcon-1.0")
 		BRM.MinimapIcon:Register(BRM.ADDON_NAME, BRM.LDO, BRM.DB.MinimapSettings)
 	end
-end
+end -- BRM:CreateMinimapButton()
+
 
 function BRM:ShowMinimapButton()
 	BRM:DebugPrint("Showing minimap icon")
 	BRM.DB.MinimapSettings.hide = false
 	BRM.MinimapIcon:Show(BRM.ADDON_NAME)
-end
+end -- BRM:ShowMinimapButton()
 
 
 function BRM:HideMinimapButton()
 	BRM:DebugPrint("Hiding minimap icon")
 	BRM.DB.MinimapSettings.hide = true
 	BRM.MinimapIcon:Hide(BRM.ADDON_NAME)
-end
+end -- BRM:HideMinimapButton()
 
 
 --#########################################
---# Events to register and handle
+--# Load saved settings
 --#########################################
 
--- This event is only for debugging.
--- Note that PLAYER_LOGIN is triggered after all ADDON_LOADED events
-function BRM.Events:PLAYER_LOGIN(...)
-	BRM:DebugPrint("Got PLAYER_LOGIN event")
-end -- BRM.Events:PLAYER_LOGIN()
-
-
--- This event is for loading our saved settings.
-function BRM.Events:ADDON_LOADED(addon)
-	BRM:DebugPrint("Got ADDON_LOADED for " .. addon)
-	if addon ~= BRM.ADDON_NAME then return end
-
-
-	--#########################################
-	--# Load saved settings
-	--#########################################
-
+-- Get existing settings from the DB, or create default settings.
+function BRM.LoadSettings()
 	BRM:DebugPrint("Loading or creating DB")
 	if BRM_DB then
 		-- Load the settings saved by the game.
@@ -582,16 +568,35 @@ function BRM.Events:ADDON_LOADED(addon)
 	BRM:DumpTable(BRM.DB)
 	BRM:DebugPrint ("End DB contents")
 
-	--#########################################
-	--# Minimap button for LDB object
-	--#########################################
+end -- BRM.LoadSettings()
+
+
+--#########################################
+--# Events to register and handle
+--#########################################
+
+-- This event is only for debugging.
+-- Note that PLAYER_LOGIN is triggered after all ADDON_LOADED events
+function BRM.Events:PLAYER_LOGIN(...)
+	BRM:DebugPrint("Got PLAYER_LOGIN event")
+end -- BRM.Events:PLAYER_LOGIN()
+
+
+-- This event is for loading our saved settings.
+function BRM.Events:ADDON_LOADED(addon)
+	BRM:DebugPrint("Got ADDON_LOADED for " .. addon)
+	if addon ~= BRM.ADDON_NAME then return end
+
+	-- Load saved settings
+	BRM.LoadSettings()
+
+	-- Minimap button for LDB object
+	BRM:CreateMinimapButton()
 
 	-- Creating the minimap icon requires somewhere to save the data.
 	-- We don't load that until this event.
 	-- So, this is the earliest point we can create the minimap icon.
-
 	-- Note that initial state of whether to display the icon is handled auto-magically by the LDBIcon library, based on the variable storage you pass it.
-	BRM:CreateMinimapButton()
 
 end -- BRM.Events:ADDON_LOADED()
 
@@ -616,6 +621,7 @@ function BRM.Events:PLAYER_ENTERING_WORLD(...)
 	BRM:DebugPrint("Got PLAYER_ENTERING_WORLD")
 
 	-- It's now safe to turn on the addon and get counts.
+	BRM:DebugPrint("Activating " .. BRM.USER_ADDON_NAME)
 	BRM.IsActive = true
 	BRM:UpdateComposition()
 
