@@ -270,9 +270,28 @@ BRM.Version = "@project-version@"
 SLASH_BRM1 = "/brm"
 SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
 
-function BRM:HandleCommandLine()
+function BRM:HandleCommandLine(arg1, arg2)
+	BRM:DebugPrint("Slash arg1 is " .. arg1)
+	if "debug" == string.lower(arg1) then
 	BRM.DebugMode = not BRM.DebugMode
+		BRM.DB.DebugMode = BRM.DebugMode
 	BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on" or "off") .. ".")
+	elseif "mm" == string.lower(arg1) then
+		BRM:DebugPrint("Initial BRM.DB.MinimapSettings.hide state is " .. (BRM.DB.MinimapSettings.hide and "true" or "false"))
+
+		if BRM.DB.MinimapSettings.hide then
+			-- turn on minimap icon
+			BRM:DebugPrint("Turning on minimap icon")
+			BRM.DB.MinimapSettings.hide = false
+			BRM:ShowMinimapButton()
+		else
+			-- turn off minimap icon
+			BRM:DebugPrint("Turning off minimap icon")
+			BRM.DB.MinimapSettings.hide = true
+			BRM:HideMinimapButton()
+		end
+	end
+
 end
 --@end-alpha@
 
@@ -482,6 +501,32 @@ end -- BRM.LDO:OnClick()
 
 
 --#########################################
+--# Minimap icon handling
+--#########################################
+
+function BRM:CreateMinimapButton()
+	if not BRM.MinimapIcon then
+		BRM:DebugPrint("Creating minimap icon")
+		BRM.MinimapIcon = LibStub("LibDBIcon-1.0")
+		BRM.MinimapIcon:Register(BRM.ADDON_NAME, BRM.LDO, BRM.DB.MinimapSettings)
+	end
+end
+
+function BRM:ShowMinimapButton()
+	BRM:DebugPrint("Showing minimap icon")
+	BRM.DB.MinimapSettings.hide = false
+	BRM.MinimapIcon:Show(BRM.ADDON_NAME)
+end
+
+
+function BRM:HideMinimapButton()
+	BRM:DebugPrint("Hiding minimap icon")
+	BRM.DB.MinimapSettings.hide = true
+	BRM.MinimapIcon:Hide(BRM.ADDON_NAME)
+end
+
+
+--#########################################
 --# Events to register and handle
 --#########################################
 
@@ -530,8 +575,9 @@ function BRM.Events:ADDON_LOADED(addon)
 	-- We don't load that until this event.
 	-- So, this is the earliest point we can create the minimap icon.
 
-	BRM.MinimapIcon = LibStub("LibDBIcon-1.0")
-	BRM.MinimapIcon:Register(BRM.ADDON_NAME, BRM.LDO, BRM.DB.MinimapSettings)
+	-- Note that initial state of whether to display the icon is handled auto-magically by the LDBIcon library, based on the variable storage you pass it.
+	BRM:CreateMinimapButton()
+
 end -- BRM.Events:ADDON_LOADED()
 
 
