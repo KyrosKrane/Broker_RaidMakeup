@@ -29,6 +29,9 @@ local pairs = pairs
 -- Define a global for our namespace
 local BRM = { }
 
+BRM.ADDON_NAME="Broker_RaidMakeup" -- the internal addon name for LibStub and other addons
+BRM.USER_ADDON_NAME="Broker_RaidMakeup" -- the name displayed to the user
+
 
 --#########################################
 --# Frame for event handling
@@ -416,15 +419,15 @@ end -- BRM:UpdateComposition()
 --# Actual LibDataBroker object
 --#########################################
 
-BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject("Broker_RaidMakeup", {
+BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 	type = "data source",
 	text = BRM:GetDisplayString(),
 	value = "0",
 	icon = BRM.MainIcon:GetIconString(),
-	label = "Broker_RaidMakeup",
+	label = BRM.USER_ADDON_NAME,
 	OnTooltipShow = function(tooltip)
 		if not tooltip or not tooltip.AddLine then return end
-		tooltip:AddLine("Broker_RaidMakeup")
+		tooltip:AddLine(BRM.USER_ADDON_NAME)
 		tooltip:AddLine("Click to refresh")
 	end,
 }) -- BRM.LDO creation
@@ -491,7 +494,7 @@ end -- BRM.Events:PLAYER_LOGIN()
 -- This event is for loading our saved settings.
 function BRM.Events:ADDON_LOADED(addon)
 	BRM:DebugPrint("Got ADDON_LOADED for " .. addon)
-	if addon ~= "Broker_RaidMakeup" then return end
+	if addon ~= BRM.ADDON_NAME then return end
 
 
 	--#########################################
@@ -527,7 +530,7 @@ function BRM.Events:ADDON_LOADED(addon)
 	-- So, this is the earliest point we can create the minimap icon.
 
 	BRM.MinimapIcon = LibStub("LibDBIcon-1.0")
-	BRM.MinimapIcon:Register("Broker_RaidMakeup", BRM.LDO, BRM.DB.MinimapSettings)
+	BRM.MinimapIcon:Register(BRM.ADDON_NAME, BRM.LDO, BRM.DB.MinimapSettings)
 end -- BRM.Events:ADDON_LOADED()
 
 
