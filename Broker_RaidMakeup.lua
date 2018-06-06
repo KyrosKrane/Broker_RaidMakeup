@@ -436,41 +436,8 @@ function BRM:UpdateComposition()
 end -- BRM:UpdateComposition()
 
 
---#########################################
---# Actual LibDataBroker object
---#########################################
-
-BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
-	type = "data source",
-	text = BRM:GetDisplayString(),
-	value = "0",
-	icon = BRM.MainIcon:GetIconString(),
-	label = BRM.USER_ADDON_NAME,
-	OnTooltipShow = function(tooltip)
-		-- make sure we have a real tooltip
-		if not tooltip or not tooltip.AddLine then
-			BRM:DebugPrint("Got invalid tooltip, exiting OnTooltipShow")
-			return
-		end
-		BRM:DebugPrint("Showing tooltip")
-		tooltip:AddLine(BRM.USER_ADDON_NAME)
-		tooltip:AddLine("Click to refresh")
-	end,
-}) -- BRM.LDO creation
-
-
--- Handler for if user clicks on the display
-function BRM.LDO:OnClick(button)
-	BRM:DebugPrint("Got click on LDB object")
-
-	if button == "LeftButton" then
-		BRM:DebugPrint("Got left button")
-	elseif button == "RightButton" then
-		BRM:DebugPrint("Got right button")
-	else
-		BRM:DebugPrint("Got some other button")
-	end
-
+-- This function handles refreshing the role counts and checking for count errors
+function BRM:RefreshCounts()
 	-- I'm trying to capture which situations don't result in an automatic update.
 	-- That essentially indicates either an event I missed coding for, or some kind of bug that resulted in invalid role counts.
 	local old_TankCount = BRM.TankCount
@@ -500,6 +467,44 @@ function BRM.LDO:OnClick(button)
 
 			-- Also schedule an update in five seconds to ensure we capture any additional changes
 			C_Timer.After(5, function() BRM:UpdateComposition() end)
+	end
+end -- BRM:RefreshCounts()
+
+
+--#########################################
+--# Actual LibDataBroker object
+--#########################################
+
+BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
+	type = "data source",
+	text = BRM:GetDisplayString(),
+	value = "0",
+	icon = BRM.MainIcon:GetIconString(),
+	label = BRM.USER_ADDON_NAME,
+	OnTooltipShow = function(tooltip)
+		-- make sure we have a real tooltip
+		if not tooltip or not tooltip.AddLine then
+			BRM:DebugPrint("Got invalid tooltip, exiting OnTooltipShow")
+			return
+		end
+		BRM:DebugPrint("Showing tooltip")
+		tooltip:AddLine(BRM.USER_ADDON_NAME)
+		tooltip:AddLine("Click to refresh")
+	end,
+}) -- BRM.LDO creation
+
+
+-- Handler for if user clicks on the display
+function BRM.LDO:OnClick(button)
+	BRM:DebugPrint("Got click on LDB object")
+
+	if button == "LeftButton" then
+		BRM:DebugPrint("Got left button")
+		BRM:RefreshCounts()
+	elseif button == "RightButton" then
+		BRM:DebugPrint("Got right button")
+	else
+		BRM:DebugPrint("Got some other button")
 	end
 
 end -- BRM.LDO:OnClick()
