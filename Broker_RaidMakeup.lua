@@ -43,6 +43,7 @@ BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
 --#########################################
 
 -- Debug settings
+-- This is needed to debug stuff before the addon loads. After the addon loads, the permanent value is stored in BRM.DB.DebugMode
 BRM.DebugMode = false
 
 --@alpha@
@@ -446,7 +447,12 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 	icon = BRM.MainIcon:GetIconString(),
 	label = BRM.USER_ADDON_NAME,
 	OnTooltipShow = function(tooltip)
-		if not tooltip or not tooltip.AddLine then return end
+		-- make sure we have a real tooltip
+		if not tooltip or not tooltip.AddLine then
+			BRM:DebugPrint("Got invalid tooltip, exiting OnTooltipShow")
+			return
+		end
+		BRM:DebugPrint("Showing tooltip")
 		tooltip:AddLine(BRM.USER_ADDON_NAME)
 		tooltip:AddLine("Click to refresh")
 	end,
@@ -553,15 +559,19 @@ function BRM.Events:ADDON_LOADED(addon)
 		BRM:DebugPrint ("Restoring existing BRM DB")
 		BRM.DB = BRM_DB
 
-		-- This situation should only occur during development, but just in case, let's handle it.
+		-- These situations should only occur during development or upgrade situations
 		if not BRM.DB.MinimapSettings then BRM.DB.MinimapSettings = {} end
+		if not BRM.DB.DebugMode then BRM.DB.DebugMode = false end
 	else
 		-- Initialize settings on first use
 		BRM:DebugPrint ("Creating new BRM DB")
 		BRM.DB = {}
 		BRM.DB.Version = 1
 		BRM.DB.MinimapSettings = {}
+		BRM.DB.DebugMode = false
 	end
+
+	BRM.DebugMode = BRM.DB.DebugMode
 
 	BRM:DebugPrint ("DB contents follow")
 	BRM:DumpTable(BRM.DB)
