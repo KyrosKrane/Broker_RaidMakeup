@@ -1,12 +1,28 @@
 package-as: Broker_RaidMakeup
 enable-nolib-creation: no
 
-ignore: # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
+ # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
+ # Also ignore packaged libraries and tests
+ignore:
     - README.md
+    - Libs/LibDBIcon-1.0/CallbackHandler-1.0
+    - Libs/LibDBIcon-1.0/LibDataBroker-1.1
+    - Libs/LibDBIcon-1.0/LibStub
+    - Libs/LibStub/tests
 
 externals:
-    Libs/AceConfig-3.0: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
-    Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
-    Libs/LibDataBroker-1.1: https://repos.wowace.com/wow/libdatabroker-1-1
-    Libs/LibDBIcon-1.0: https://repos.wowace.com/wow/libdbicon-1-0/trunk
-    Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
+    Libs/AceConfig-3.0:
+        url: https://repos.wowace.com/wow/ace3/trunk/AceConfig-3.0
+        tag: latest
+    Libs/CallbackHandler-1.0:
+        url: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
+        tag: latest
+    Libs/LibDataBroker-1.1:
+        url: https://repos.wowace.com/wow/libdatabroker-1-1
+        tag: latest
+    Libs/LibDBIcon-1.0:
+        url: https://repos.wowace.com/wow/libdbicon-1-0/trunk
+        tag: latest
+    Libs/LibStub:
+        url: https://repos.wowace.com/wow/libstub/trunk
+        tag: latest
