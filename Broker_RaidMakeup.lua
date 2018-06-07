@@ -10,7 +10,7 @@
 
 -- This add-on creates a LibDataBroker object that shows you the makeup of your raid (tanks, healers, and dps).
 -- Requires an LDB display to show the info.
--- No configuration or setup.
+-- Configuration is handled through the standard Blizzard addons config window.
 
 
 --#########################################
@@ -67,14 +67,10 @@ BRM.Version = "@project-version@"
 BRM.OptionsTable = {
 	type = "group",
 	args = {
-		showcounts = {
-			name = "Show counts in tooltip",
-			desc = "Show the role counts in the tooltip as well as in the broker display",
-			type = "toggle",
-			set = function(info,val) BRM.DB.ShowCountInTooltip = val end,
-			get = function(info) return BRM.DB.ShowCountInTooltip end,
-			descStyle = "inline",
-			width = "full",
+		MinimapHeader = {
+			name = "Minimap Options",
+			type = "header",
+			order = 100,
 		},
 		minimapicon = {
 			name = "Show minimap icon",
@@ -84,7 +80,46 @@ BRM.OptionsTable = {
 			get = function(info) return (not BRM.DB.MinimapSettings.hide) end,
 			descStyle = "inline",
 			width = "full",
+			order = 110,
 		}, -- minimapicon
+		TooltipHeader = {
+			name = "Tooltip Options",
+			type = "header",
+			order = 200,
+		},
+		showheader = {
+			name = "Show the addon name in tooltip",
+			type = "toggle",
+			set = function(info,val) BRM.DB.ShowHeaderInTooltip = val end,
+			get = function(info) return BRM.DB.ShowHeaderInTooltip end,
+			descStyle = "inline",
+			width = "full",
+			order = 210,
+		},
+		showcounts = {
+			name = "Show the role counts in the tooltip as well as in the main display",
+			type = "toggle",
+			set = function(info,val) BRM.DB.ShowCountInTooltip = val end,
+			get = function(info) return BRM.DB.ShowCountInTooltip end,
+			descStyle = "inline",
+			width = "full",
+			order = 220,
+		},
+		showhelp = {
+			name = "Show an explanation of what clicking and rightclicking does in the tooltip",
+			type = "toggle",
+			set = function(info,val) BRM.DB.ShowInstructionsInTooltip = val end,
+			get = function(info) return BRM.DB.ShowInstructionsInTooltip end,
+			descStyle = "inline",
+			width = "full",
+			order = 230,
+		},
+		explanation = {
+			name = "Unchecking all three options disables the tooltip entirely.",
+			type = "description",
+			fontSize = "medium",
+			order = 290,
+		},
 		debug = {
 			name = "Enable debug output",
 			desc = "Prints extensive debugging output about everything " .. BRM.USER_ADDON_NAME .. " does",
@@ -247,6 +282,7 @@ function BRM:GetDisplayString()
 end -- BRM:GetDisplayString()
 
 
+-- This function increments the count of a particular role. Abstracted out since we have the same logoc in a few different places
 function BRM:IncrementRole(role)
 	-- Handle case of nil roles - can happen when the game has not fully loaded and we try to do a role check
 	if not role then role = "unknown" end
@@ -265,6 +301,7 @@ function BRM:IncrementRole(role)
 end -- BRM:IncrementRole()
 
 
+-- This function does the actual counting of people in the group
 function BRM:UpdateComposition()
 	BRM:DebugPrint("in BRM:UpdateComposition")
 
@@ -408,17 +445,27 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 			BRM:DebugPrint("Got invalid tooltip, exiting OnTooltipShow")
 			return
 		end
-		BRM:DebugPrint("Showing tooltip")
+		BRM:DebugPrint("Valid tooltip provided")
+
+		-- Check if the user wants a tooltip
+		if not BRM.DB.ShowHeaderInTooltip and not BRM.DB.ShowCountInTooltip and not BRM.DB.ShowInstructionsInTooltip then
+			BRM:DebugPrint("User does not want a tooltip")
+			return
+		end
+		BRM:DebugPrint("User wants a tooltip")
 
 		-- delete existing lines
 		tooltip:ClearLines()
 
 		-- headline
-		tooltip:AddLine(BRM.USER_ADDON_NAME)
+		if BRM.DB.ShowHeaderInTooltip then
+			BRM:DebugPrint("Adding header")
+			tooltip:AddLine(BRM.USER_ADDON_NAME)
+		end
 
 		-- If the user wants the counts in the tooltip, add them.
 		if BRM.DB.ShowCountInTooltip then
-			BRM:DebugPrint("Preparing tooltip")
+			BRM:DebugPrint("Preparing counts")
 
 			local DisplayString = ""
 
@@ -439,8 +486,11 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 		end
 
 		-- Add instructions
-		tooltip:AddLine("Click to refresh")
-		tooltip:AddLine("Right click for options")
+		if BRM.DB.ShowInstructionsInTooltip then
+			BRM:DebugPrint("Adding help")
+			tooltip:AddLine("Click to refresh")
+			tooltip:AddLine("Right click for options")
+		end
 	end,
 }) -- BRM.LDO creation
 
@@ -516,19 +566,24 @@ function BRM.LoadSettings()
 		BRM.DB = BRM_DB
 
 		-- These situations should only occur during development or upgrade situations
-		if not BRM.DB.MinimapSettings then BRM.DB.MinimapSettings = {} end
-		if not BRM.DB.ShowCountInTooltip then BRM.DB.ShowCountInTooltip = false end
-		if not BRM.DB.DebugMode then BRM.DB.DebugMode = false end
+		if not BRM.DB.MinimapSettings																then BRM.DB.MinimapSettings = {} end
+		if not BRM.DB.ShowHeaderInTooltip			and BRM.DB.ShowHeaderInTooltip ~= false			then BRM.DB.ShowHeaderInTooltip = true end
+		if not BRM.DB.ShowCountInTooltip			and BRM.DB.ShowCountInTooltip ~= false			then BRM.DB.ShowCountInTooltip = false end
+		if not BRM.DB.ShowInstructionsInTooltip		and BRM.DB.ShowInstructionsInTooltip ~= false	then BRM.DB.ShowInstructionsInTooltip = true end
+		if not BRM.DB.DebugMode																		then BRM.DB.DebugMode = false end
 	else
 		-- Initialize settings on first use
 		BRM:DebugPrint ("Creating new BRM DB")
 		BRM.DB = {}
 		BRM.DB.Version = 1
 		BRM.DB.MinimapSettings = {}
+		BRM.DB.ShowHeaderInTooltip = true
 		BRM.DB.ShowCountInTooltip = false
+		BRM.DB.ShowInstructionsInTooltip = true
 		BRM.DB.DebugMode = false
 	end
 
+	-- Load the saved debug mode for use in the addon.
 	BRM.DebugMode = BRM.DB.DebugMode
 
 	BRM:DebugPrint ("DB contents follow")
