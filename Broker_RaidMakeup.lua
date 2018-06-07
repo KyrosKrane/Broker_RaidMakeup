@@ -39,6 +39,53 @@ BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
 
 
 --#########################################
+--# Slash command options and settings
+--#########################################
+
+BRM.OptionsTable = {
+	type = "group",
+	args = {
+		showcounts = {
+			name = "Show counts in tooltip",
+			desc = "Show the role counts in the tooltip as well as in the broker display",
+			type = "toggle",
+			set = function(info,val) BRM.DB.ShowCountInTooltip = val end,
+			get = function(info) return BRM.DB.ShowCountInTooltip end,
+			descStyle = "inline",
+			width = "full",
+		},
+		minimapicon = {
+			name = "Show minimap icon",
+			desc = "Show a minimap icon for " .. BRM.USER_ADDON_NAME,
+			type = "toggle",
+			set = function(info,val) BRM:SetMinimapButton(val) end,
+			get = function(info) return (not BRM.DB.MinimapSettings.hide) end,
+			descStyle = "inline",
+			width = "full",
+		}, -- minimapicon
+		debug = {
+			name = "Enable debug output",
+			desc = "Prints extensive debugging output about everything " .. BRM.USER_ADDON_NAME .. " does",
+			type = "toggle",
+			set = function(info,val) BRM:SetDebugMode(val) end,
+			get = function(info) return BRM.DebugMode end,
+			descStyle = "inline",
+			width = "full",
+			hidden = true,
+		}, -- debug
+	} -- args
+} -- BRM.OptionsTable
+
+
+-- Process the options and create the AceConfig options table
+BRM.AceConfig = LibStub("AceConfig-3.0")
+BRM.AceConfig:RegisterOptionsTable(BRM.ADDON_NAME, BRM.OptionsTable, {"brm"})
+
+-- Create the frame to set the options and add it to the Blizzard settings
+BRM.ConfigFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(BRM.ADDON_NAME, BRM.USER_ADDON_NAME)
+
+
+--#########################################
 --# Debugging setup
 --#########################################
 
@@ -107,6 +154,13 @@ function BRM:DumpTable(tab, indent)
 		end
 	end
 end -- BRM:DumpTable()
+
+
+-- Sets the debug mode and writes the setting to the DB
+function BRM:SetDebugMode(setting)
+	BRM.DebugMode = setting
+	BRM.DB.DebugMode = setting
+end
 
 
 --#########################################
@@ -263,40 +317,6 @@ BRM.FACTION_HORDE = "Horde"
 BRM.Version = "@project-version@"
 
 
---@alpha@
---#########################################
---# Slash command handling - only for testing
---#########################################
-
-SLASH_BRM1 = "/brm"
-SlashCmdList.BRM = function (...) BRM:HandleCommandLine(...) end
-
-function BRM:HandleCommandLine(arg1, arg2)
-	BRM:DebugPrint("Slash arg1 is " .. arg1)
-	if "debug" == string.lower(arg1) then
-		BRM.DebugMode = not BRM.DebugMode
-		BRM.DB.DebugMode = BRM.DebugMode
-		BRM:ChatPrint("Printing debug statements is now " .. (BRM.DebugMode and "on" or "off") .. ".")
-	elseif "mm" == string.lower(arg1) then
-		BRM:DebugPrint("Initial BRM.DB.MinimapSettings.hide state is " .. (BRM.DB.MinimapSettings.hide and "true" or "false"))
-
-		if BRM.DB.MinimapSettings.hide then
-			-- turn on minimap icon
-			BRM:DebugPrint("Turning on minimap icon")
-			BRM.DB.MinimapSettings.hide = false
-			BRM:ShowMinimapButton()
-		else
-			-- turn off minimap icon
-			BRM:DebugPrint("Turning off minimap icon")
-			BRM.DB.MinimapSettings.hide = true
-			BRM:HideMinimapButton()
-		end
-	end
-
-end
---@end-alpha@
-
-
 --#########################################
 --# Variables for tracking raid members
 --#########################################
@@ -342,7 +362,7 @@ function BRM:IncrementRole(role)
 	end
 
 	BRM.TotalCount = BRM.TotalCount + 1
-end
+end -- BRM:IncrementRole()
 
 
 function BRM:UpdateComposition()
@@ -489,8 +509,38 @@ BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 			return
 		end
 		BRM:DebugPrint("Showing tooltip")
+
+		-- delete existing lines
+		tooltip:ClearLines()
+
+		-- headline
 		tooltip:AddLine(BRM.USER_ADDON_NAME)
+
+		-- If the user wants the counts in the tooltip, add them.
+		if BRM.DB.ShowCountInTooltip then
+			BRM:DebugPrint("Preparing tooltip")
+
+			local DisplayString = ""
+
+			-- faction handling
+			if BRM.FACTION_HORDE == BRM.Faction then
+				DisplayString = BRM.HordeIcon:GetIconString()
+			elseif BRM.FACTION_ALLIANCE == BRM.Faction then
+				DisplayString = BRM.AllianceIcon:GetIconString()
+			else
+				-- What the hell?
+				BRM:DebugPrint("Unknown faction detected - " .. BRM.Faction)
+				DisplayString = BRM.MainIcon:GetIconString()
+			end
+
+			DisplayString = DisplayString .. BRM:GetDisplayString()
+
+			tooltip:AddLine(DisplayString)
+		end
+
+		-- Add instructions
 		tooltip:AddLine("Click to refresh")
+		tooltip:AddLine("Right click for options")
 	end,
 }) -- BRM.LDO creation
 
@@ -504,6 +554,12 @@ function BRM.LDO:OnClick(button)
 		BRM:RefreshCounts()
 	elseif button == "RightButton" then
 		BRM:DebugPrint("Got right button")
+		-- toggle showing the count
+		InterfaceOptionsFrame_OpenToCategory(BRM.ConfigFrame)
+		InterfaceOptionsFrame_OpenToCategory(BRM.ConfigFrame)
+			-- Yes, this should be here twice. Workaround for a Blizzard bug.
+			-- When you first open the options panel, it opens to the Game control tab, not the Addons control tab.
+			-- Calling this twice bypasses that.
 	else
 		BRM:DebugPrint("Got some other button")
 	end
@@ -537,6 +593,15 @@ function BRM:HideMinimapButton()
 	BRM.MinimapIcon:Hide(BRM.ADDON_NAME)
 end -- BRM:HideMinimapButton()
 
+-- This function is for calling from the options panel. Pass in true to show the icon, false to hide it (which matches the values of the checkbox in the config panel)
+function BRM:SetMinimapButton(state)
+	if true == state then
+		BRM:ShowMinimapButton()
+	else
+		BRM:HideMinimapButton()
+	end
+end -- BRM:SetMinimapButton()
+
 
 --#########################################
 --# Load saved settings
@@ -552,6 +617,7 @@ function BRM.LoadSettings()
 
 		-- These situations should only occur during development or upgrade situations
 		if not BRM.DB.MinimapSettings then BRM.DB.MinimapSettings = {} end
+		if not BRM.DB.ShowCountInTooltip then BRM.DB.ShowCountInTooltip = false end
 		if not BRM.DB.DebugMode then BRM.DB.DebugMode = false end
 	else
 		-- Initialize settings on first use
@@ -559,6 +625,7 @@ function BRM.LoadSettings()
 		BRM.DB = {}
 		BRM.DB.Version = 1
 		BRM.DB.MinimapSettings = {}
+		BRM.DB.ShowCountInTooltip = false
 		BRM.DB.DebugMode = false
 	end
 
@@ -592,11 +659,10 @@ function BRM.Events:ADDON_LOADED(addon)
 
 	-- Minimap button for LDB object
 	BRM:CreateMinimapButton()
-
-	-- Creating the minimap icon requires somewhere to save the data.
-	-- We don't load that until this event.
-	-- So, this is the earliest point we can create the minimap icon.
-	-- Note that initial state of whether to display the icon is handled auto-magically by the LDBIcon library, based on the variable storage you pass it.
+		-- Creating the minimap icon requires somewhere to save the data - namely, the addon DB.
+		-- We don't load that until this event.
+		-- So, this is the earliest point we can create the minimap icon.
+		-- Note that initial state of whether to display the icon is handled auto-magically by the LDBIcon library, based on the variable storage you pass it.
 
 end -- BRM.Events:ADDON_LOADED()
 
@@ -626,6 +692,7 @@ function BRM.Events:PLAYER_ENTERING_WORLD(...)
 	BRM:UpdateComposition()
 
 	-- Get the main app icon based on the player's faction
+	BRM:DebugPrint("Determining faction")
 	BRM.Faction, _ = UnitFactionGroup("player")
 
 	if not BRM.Faction then
