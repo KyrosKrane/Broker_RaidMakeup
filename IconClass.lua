@@ -7,6 +7,15 @@
 -- So, we create a custom object to hold icon information, and give it a method to create a text string to display that icon.
 -- That text string can then be embedded in the LDB label to show the icon.
 
+-- Get local references to globals
+local setmetatable = setmetatable
+local string = string
+
+
+--#########################################
+--# Icon class setup
+--#########################################
+
 -- Create the object class
 -- Adapted from http://lua-users.org/wiki/ObjectOrientationTutorial
 IconClass = {}
@@ -18,6 +27,10 @@ setmetatable(IconClass, {
 	end,
 })
 
+
+--#########################################
+--# Constructor
+--#########################################
 
 -- Create the constructor
 function IconClass.new(iconfile, IconFileX, IconFileY, StartX, EndX, StartY, EndY)
@@ -48,6 +61,12 @@ function IconClass.new(iconfile, IconFileX, IconFileY, StartX, EndX, StartY, End
 end -- IconClass.new()
 
 
+--#########################################
+--# Methods
+--#########################################
+
+-- Gets the display string without the control codes that make WoW display it as an icon.
+-- Useful for debugging or when there's additional text that needs to be added or modified before the control codes are added.
 function IconClass:GetIconStringInner()
 	-- Icon strings effectively have to be built right to left, since if the rightmost parameters are required, then the ones to the left are also required.
 
@@ -86,6 +105,7 @@ function IconClass:GetIconStringInner()
 end -- IconClass:GetIconStringInner()
 
 
+-- Gets a string that, when printed in the UI, is converted to an icon shown inline in the text.
 function IconClass:GetIconString()
 	-- This function wraps the icon string in the control code that causes it to display as an icon
 	return string.format("\124T%s\124t", self:GetIconStringInner())
