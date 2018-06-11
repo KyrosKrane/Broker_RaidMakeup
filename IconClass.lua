@@ -1,11 +1,24 @@
+-- IconClass.lua
+-- Written by KyrosKrane Sylvanblade (kyros@kyros.info)
+-- Copyright (c) 2018 KyrosKrane Sylvanblade
+-- Licensed under the MIT License, as per the included file.
+
+--#########################################
+--# Description
+--#########################################
+
+-- This file creates a class that can be used to store information on icons.
+-- Methods are available to get a text string to display those icons inline with text.
+
+-- The normal way of handling icons is to create a texture, load the icon file into that, set the region you want, and done.
+-- However, we need to embed icons into a text string; for example, to display in an LDB label.
+-- So, we create a custom object to hold icon information, and give it a method to create a text string to display that icon.
+-- That text string can then be embedded in the LDB label to show the icon.
+
+
 --#########################################
 --# Icon class setup
 --#########################################
-
--- The normal way of handling icons is to create a texture, load the icon file into that, set the region you want, and done.
--- However, we need to embed icons into a text string for display in the LDB label.
--- So, we create a custom object to hold icon information, and give it a method to create a text string to display that icon.
--- That text string can then be embedded in the LDB label to show the icon.
 
 -- Get local references to globals
 local setmetatable = setmetatable
