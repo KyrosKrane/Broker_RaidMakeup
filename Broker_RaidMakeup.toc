@@ -9,6 +9,10 @@
 
 ## SavedVariablesPerCharacter: BRM_DB
 
+# File revision: @file-abbreviated-hash@
+# File last updated: @file-date-iso@
+
+
 
 #@no-lib-strip@
 Libs\LibStub\LibStub.lua

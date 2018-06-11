@@ -3,6 +3,9 @@
 -- Copyright (c) 2018 KyrosKrane Sylvanblade
 -- Licensed under the MIT License, as per the included file.
 
+-- File revision: @file-abbreviated-hash@
+-- File last updated: @file-date-iso@
+
 
 --#########################################
 --# Description
