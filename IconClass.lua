@@ -110,9 +110,8 @@ function IconClass:GetIconStringInner()
 	end
 
 	-- Size2 can be nil, so to avoid comparing or concatenating a nil, we have some special handling
-	local localsizetwo = self.SizeTwo or ""
 	if required or (self.SizeTwo and self.SizeTwo >= 0) then
-		OutputString = string.format(":%s%s", localsizetwo, OutputString)
+		OutputString = string.format(":%s%s", (self.SizeTwo or ""), OutputString)
 	end
 
 	-- Size1 and the icon path are required.
