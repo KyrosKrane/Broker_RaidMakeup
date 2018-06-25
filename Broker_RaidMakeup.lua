@@ -436,7 +436,7 @@ end -- BRM:RefreshCounts()
 --# Actual LibDataBroker object
 --#########################################
 
-BRM.LDO = _G.LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
+BRM.LDO = LibStub("LibDataBroker-1.1"):NewDataObject(BRM.ADDON_NAME, {
 	type = "data source",
 	text = BRM:GetDisplayString(),
 	value = "0",
