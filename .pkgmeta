@@ -9,7 +9,7 @@ ignore:
 
 externals:
     #LibStub
-    Libs/LibStub: svn://repos.wowace.com/wow/libstub/tags/1.0
+    Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
 
     #Other LibDataBroker related addons
     Libs/CallbackHandler-1.0: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
