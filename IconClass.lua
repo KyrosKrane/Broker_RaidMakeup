@@ -128,9 +128,44 @@ function IconClass:GetIconString()
 end -- IconClass:GetIconString()
 
 
--- @TODO: Add method to get the TexCoords of an icon for inclusion in the LDB object's iconCoords parameter.
+-- Returns a table of four coordinates that can be passed to SetTexCoord to define the corners of an icon within a bigger texture.
+-- Values are always in the range of 0 to 1.
 -- See:
 --	https://wow.gamepedia.com/API_Texture_SetTexCoord
 --	https://github.com/tekkub/libdatabroker-1-1/wiki/Data-Specifications
+function IconClass:GetTexCoords4()
+	local left, right, top, bottom, coords
+
+	left = 1.0 * self.StartX / self.IconFileX
+	right = 1.0 * self.EndX / self.IconFileX
+	top = 1.0 * self.StartY / self.IconFileY
+	bottom = 1.0 * self.EndY / self.IconFileY
+
+	coords = {left, right, top, bottom}
+	return coords
+end
 
 
+-- Returns a table of eight numbers that can be passed to SetTexCoord to define the corners of an icon within a bigger texture.
+-- Values are always in the range of 0 to 1.
+-- See:
+--	https://wow.gamepedia.com/API_Texture_SetTexCoord
+--	https://github.com/tekkub/libdatabroker-1-1/wiki/Data-Specifications
+function IconClass:GetTexCoords8()
+	local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy, coords
+
+	ULx = 1.0 * self.StartX / self.IconFileX
+	ULy = 1.0 * self.StartY / self.IconFileY
+
+	LLx = ULx
+	LLy = 1.0 * self.EndY / self.IconFileY
+
+	URx = 1.0 * self.EndX / self.IconFileX
+	URy = ULy
+
+	LRx = URx
+	LRy = LLy
+
+	coords = {ULx, ULy, LLx, LLy, URx, URy, LRx, LRy}
+	return coords
+end
