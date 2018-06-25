@@ -573,7 +573,10 @@ function BRM.LoadSettings()
 		BRM.DB = BRM_DB
 
 		-- These situations should only occur during development or upgrade situations
-		if not BRM.DB.MinimapSettings																then BRM.DB.MinimapSettings = {} end
+		if not BRM.DB.MinimapSettings then
+			BRM.DB.MinimapSettings = {}
+			BRM.DB.MinimapSettings.hide = true
+		end
 		if not BRM.DB.ShowHeaderInTooltip			and BRM.DB.ShowHeaderInTooltip ~= false			then BRM.DB.ShowHeaderInTooltip = true end
 		if not BRM.DB.ShowCountInTooltip			and BRM.DB.ShowCountInTooltip ~= false			then BRM.DB.ShowCountInTooltip = false end
 		if not BRM.DB.ShowInstructionsInTooltip		and BRM.DB.ShowInstructionsInTooltip ~= false	then BRM.DB.ShowInstructionsInTooltip = true end
@@ -584,6 +587,7 @@ function BRM.LoadSettings()
 		BRM.DB = {}
 		BRM.DB.Version = 1
 		BRM.DB.MinimapSettings = {}
+		BRM.DB.MinimapSettings.hide = true
 		BRM.DB.ShowHeaderInTooltip = true
 		BRM.DB.ShowCountInTooltip = false
 		BRM.DB.ShowInstructionsInTooltip = true
