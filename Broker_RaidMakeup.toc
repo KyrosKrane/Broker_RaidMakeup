@@ -4,8 +4,8 @@
 ## Author: KyrosKrane Sylvanblade
 ## Notes: LDB display that counts the tanks, healers, and dps in your raid
 
-## X-CuXXXrse-Project-ID: 294431
-## X-WoXXXWI-ID: 24656
+## X-Curse-Project-ID: 294431
+## X-WoWI-ID: 24656
 
 ## SavedVariablesPerCharacter: BRM_DB
 
