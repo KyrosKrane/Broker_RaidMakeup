@@ -21,7 +21,7 @@
 
 
 --#########################################
---# Icon class setup
+--# Global to local references
 --#########################################
 
 -- Get local references to globals
