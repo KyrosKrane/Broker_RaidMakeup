@@ -1,17 +1,14 @@
 package-as: Broker_RaidMakeup
 enable-nolib-creation: no
 
- # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
- # Also ignore packaged libraries and tests
+# Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
+# Also ignore packaged libraries and tests
 ignore:
     - README.md
-    - Libs/LibStub/tests/
+    - Libs/LibStub/tests
 
 externals:
     #LibStub
-    # Recommended by P3lim
-    # Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
-    # Used by Grid
     Libs/LibStub: https://repos.wowace.com/wow/libstub/tags/1.0
 
     #Other LibDataBroker related addons
