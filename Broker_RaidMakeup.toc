@@ -4,8 +4,8 @@
 ## Author: KyrosKrane Sylvanblade
 ## Notes: LDB display that counts the tanks, healers, and dps in your raid
 
-## X-Curse-Project-ID: 294431
-## X-WoWI-ID: 24656
+## X-CuXXXrse-Project-ID: 294431
+## X-WoXXXWI-ID: 24656
 
 ## SavedVariablesPerCharacter: BRM_DB
 
@@ -20,9 +20,11 @@ Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
-Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.lua
 Libs\AceGUI-3.0\AceGUI-3.0.xml
-Libs\AceConfig-3.0\AceConfig-3.0.xml
+Libs\AceConfigRegistry-3.0\AceConfigRegistry-3.0.lua
+Libs\AceConfigDialog-3.0\AceConfigDialog-3.0.lua
+Libs\AceConfigCmd-3.0\AceConfigCmd-3.0.lua
 #@end-no-lib-strip@
 
 IconClass.lua

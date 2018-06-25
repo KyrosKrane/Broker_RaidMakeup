@@ -138,8 +138,12 @@ BRM.OptionsTable = {
 
 
 -- Process the options and create the AceConfig options table
-BRM.AceConfig = LibStub("AceConfig-3.0")
-BRM.AceConfig:RegisterOptionsTable(BRM.ADDON_NAME, BRM.OptionsTable, {"brm"})
+BRM.AceConfigReg = LibStub("AceConfigRegistry-3.0")
+BRM.AceConfigReg:RegisterOptionsTable(BRM.ADDON_NAME, BRM.OptionsTable)
+
+-- Create the slash command handler
+BRM.AceConfigCmd = LibStub("AceConfigCmd-3.0")
+BRM.AceConfigCmd:CreateChatCommand("brm", BRM.ADDON_NAME)
 
 -- Create the frame to set the options and add it to the Blizzard settings
 BRM.ConfigFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(BRM.ADDON_NAME, BRM.USER_ADDON_NAME)
