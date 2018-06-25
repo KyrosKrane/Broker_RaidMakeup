@@ -5,6 +5,7 @@ enable-nolib-creation: no
  # Also ignore packaged libraries and tests
 ignore:
     - README.md
+    - Libs/LibStub/tests
 
 externals:
    Libs/LibStub: https://repos.wowace.com/wow/libstub/trunk
