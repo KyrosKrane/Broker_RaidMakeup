@@ -132,5 +132,7 @@ end -- IconClass:GetIconString()
 -- See:
 --	https://wow.gamepedia.com/API_Texture_SetTexCoord
 --	https://github.com/tekkub/libdatabroker-1-1/wiki/Data-Specifications
+--	https://us.battle.net/forums/en/wow/topic/20752506801
 
-
+-- Escape sequence reference:
+--	http://wowwiki.wikia.com/wiki/UI_escape_sequences#Grammar
