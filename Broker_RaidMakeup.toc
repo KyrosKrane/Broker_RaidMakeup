@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80205
 ## Title: Broker_RaidMakeup
 ## Version: @project-version@
 ## Author: KyrosKrane Sylvanblade
