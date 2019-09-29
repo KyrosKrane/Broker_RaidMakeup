@@ -1,6 +1,6 @@
 -- Broker_RaidMakeup.lua
 -- Written by KyrosKrane Sylvanblade (kyros@kyros.info)
--- Copyright (c) 2018 KyrosKrane Sylvanblade
+-- Copyright (c) 2018-2019 KyrosKrane Sylvanblade
 -- Licensed under the MIT License, as per the included file.
 
 -- File revision: @file-abbreviated-hash@
@@ -21,7 +21,6 @@
 --#########################################
 
 -- Get a local reference to speed up execution.
-local _G = _G
 local string = string
 local print = print
 local setmetatable = setmetatable
@@ -29,8 +28,8 @@ local select = select
 local type = type
 local pairs = pairs
 
--- Define a global for our namespace
-local BRM = {}
+-- Get the shared storage area for our namespace
+local addonName, BRM = ...
 
 
 --#########################################
@@ -46,8 +45,8 @@ BRM.Frame, BRM.Events = CreateFrame("Frame"), {}
 --#########################################
 
 -- The strings that define the addon
-BRM.ADDON_NAME="Broker_RaidMakeup" -- the internal addon name for LibStub and other addons
-BRM.USER_ADDON_NAME="Broker_RaidMakeup" -- the name displayed to the user
+BRM.ADDON_NAME = addonName -- the internal addon name for LibStub and other addons
+BRM.USER_ADDON_NAME = "Broker_RaidMakeup" -- the name displayed to the user
 
 -- The strings used by the game to represent the roles. I don't think these are localized in the game.
 BRM.ROLE_HEALER = "HEALER"
@@ -61,6 +60,25 @@ BRM.FACTION_HORDE = "Horde"
 
 -- The version of this add-on
 BRM.Version = "@project-version@"
+
+
+--#########################################
+--# Bail out on WoW Classic
+--#########################################
+
+-- Roles don't exist on WoW Classic, so if a user runs this on Classic, just give them an error message and exit at once.
+-- for Classic: local IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+-- For retail: local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	BRM.Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+	BRM.Frame:SetScript("OnEvent", function(self, event, ...)
+		if "PLAYER_ENTERING_WORLD" == event then
+			BRM.Frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+			DEFAULT_CHAT_FRAME:AddMessage("|cff0066ffBRM:|r " .. BRM.ADDON_NAME .. " will not run on WoW Classic. It has been disabled. Please remove it from your WoW Classic addon folders.")
+		end
+	end)
+	return
+end
 
 
 --#########################################
