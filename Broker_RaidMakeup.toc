@@ -3,6 +3,7 @@
 ## Version: @project-version@
 ## Author: KyrosKrane Sylvanblade
 ## Notes: LDB display that counts the tanks, healers, and dps in your raid
+## IconAtlas: UI-Frame-TankIcon
 
 ## X-Curse-Project-ID: 294431
 ## X-WoWI-ID: 24656
