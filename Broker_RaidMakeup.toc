@@ -1,4 +1,4 @@
-## Interface: 100205
+## Interface: 100206
 ## Title: Broker_RaidMakeup
 ## Version: @project-version@
 ## Author: KyrosKrane Sylvanblade
