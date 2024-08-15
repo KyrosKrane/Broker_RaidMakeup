@@ -61,12 +61,12 @@ BRM.Version = "@project-version@"
 -- Roles don't exist on WoW Classic, so if a user runs this on Classic, just give them an error message and exit at once.
 -- for Classic: local IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 -- For retail: local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	BRM.Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	BRM.Frame:SetScript("OnEvent", function(self, event, ...)
 		if "PLAYER_ENTERING_WORLD" == event then
 			BRM.Frame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-			DEFAULT_CHAT_FRAME:AddMessage("|cff0066ffBRM:|r " .. BRM.ADDON_NAME .. " will not run on WoW Classic. It has been disabled. Please remove it from your WoW Classic addon folders.")
+			DEFAULT_CHAT_FRAME:AddMessage("|cff0066ffBRM:|r " .. BRM.ADDON_NAME .. " will not run on Classic versions of WoW. It has been disabled. Please remove it from your Classic addon folders.")
 		end
 	end)
 	return
