@@ -20,14 +20,6 @@
 --# Globals and utilities
 --#########################################
 
--- Get a local reference to speed up execution.
-local string = string
-local print = print
-local setmetatable = setmetatable
-local select = select
-local type = type
-local pairs = pairs
-
 -- Get the shared storage area for our namespace
 local addonName, BRM = ...
 
