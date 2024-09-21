@@ -1,6 +1,6 @@
 -- Broker_RaidMakeup.lua
 -- Written by KyrosKrane Sylvanblade (kyros@kyros.info)
--- Copyright (c) 2018-2019 KyrosKrane Sylvanblade
+-- Copyright (c) 2018-2024 KyrosKrane Sylvanblade
 -- Licensed under the MIT License, as per the included file.
 
 -- File revision: @file-abbreviated-hash@
@@ -156,7 +156,7 @@ BRM.AceConfigCmd = LibStub("AceConfigCmd-3.0")
 BRM.AceConfigCmd:CreateChatCommand("brm", BRM.ADDON_NAME)
 
 -- Create the frame to set the options and add it to the Blizzard settings
-BRM.ConfigFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(BRM.ADDON_NAME, BRM.USER_ADDON_NAME)
+BRM.ConfigFrame, BRM.ConfigFrameCategoryID = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(BRM.ADDON_NAME, BRM.USER_ADDON_NAME)
 
 
 --#########################################
@@ -521,12 +521,7 @@ function BRM.LDO:OnClick(button)
 		BRM:RefreshCounts()
 	elseif button == "RightButton" then
 		BRM:DebugPrint("Got right button")
-		-- toggle showing the count
-		InterfaceOptionsFrame_OpenToCategory(BRM.ConfigFrame)
-		InterfaceOptionsFrame_OpenToCategory(BRM.ConfigFrame)
-			-- Yes, this should be here twice. Workaround for a Blizzard bug.
-			-- When you first open the options panel, it opens to the Game control tab, not the Addons control tab.
-			-- Calling this twice bypasses that.
+		Settings.OpenToCategory(BRM.ConfigFrameCategoryID);
 	else
 		BRM:DebugPrint("Got some other button")
 	end
