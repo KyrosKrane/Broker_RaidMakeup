@@ -521,7 +521,9 @@ function BRM.LDO:OnClick(button)
 		BRM:RefreshCounts()
 	elseif button == "RightButton" then
 		BRM:DebugPrint("Got right button")
-		Settings.OpenToCategory(BRM.ConfigFrameCategoryID);
+		if not InCombatLockdown() then
+			Settings.OpenToCategory(BRM.ConfigFrameCategoryID);
+		end
 	else
 		BRM:DebugPrint("Got some other button")
 	end
