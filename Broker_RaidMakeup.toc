@@ -1,12 +1,12 @@
-# File revision: @file-abbreviated-hash@
-# File last updated: @file-date-iso@
-
 ## Interface: @toc-version-retail@
 ## Title: Broker_RaidMakeup
 ## Version: @project-version@
 ## Author: KyrosKrane Sylvanblade
 ## Notes: LDB display that counts the tanks, healers, and dps in your raid
 ## IconAtlas: UI-Frame-TankIcon
+
+# File revision: @file-abbreviated-hash@
+# File last updated: @file-date-iso@
 
 ## SavedVariablesPerCharacter: BRM_DB
 
